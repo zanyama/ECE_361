@@ -18,7 +18,8 @@ float stats_max(const float a[], int n);
 float stats_mean(const float a[], int n);
 
 /* Longest run of consecutive values in a[0..n-1] strictly greater than
-   threshold. A value equal to threshold ends a run. Assumes n >= 1. */
+   threshold. A value equal to threshold ends a run. Returns the run's length
+   and start index.  Assumes n >= 1. */
 stats_run_t stats_longest_run_above(const float a[], int n, float threshold);
 
 #endif
