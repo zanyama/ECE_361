@@ -27,8 +27,6 @@ void print_binary(uint32_t x, int width) {
         if (i % 4 == 0 && i > 0) {
             printf(" ");
         }
-
-        /* if i is a multiple of 4 and i > 0, print a space */
     }
 }
 
