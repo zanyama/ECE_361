@@ -4,3 +4,4 @@ hw02/readings
 hw02/tests/test_stats
 project/pump
 hw03/tests/test_ptr
+project/tests/test_sensor
