@@ -24,13 +24,13 @@ int minmax(const float *a, int n, float *min, float *max) {
     for (const float *p = a + 1; p < a + n; p++) {
         if (*p < minVal) minVal = *p;
         if (*p > maxVal) maxVal = *p;
-	}
+    }
 
     // write to pointer at the end
     *min = minVal;
     *max = maxVal;
 
-	return 0;
+    return 0;
 }
 
 const float *find_above(const float *a, int n, float threshold) {
