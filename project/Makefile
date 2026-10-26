@@ -10,7 +10,7 @@ pump: $(OBJS)
 main.o: main.c iom361_r4.h
 sensor.o: sensor.c sensor.h iom361_r4.h
 fsm.o: fsm.c fsm.h
-store.o: store.c store.h
+store.o: store.c store.h sensor.h fsm.h
 aux.o: aux.c aux.h
 report.o: report.c report.h
 iom361_r4.o: iom361_r4.c iom361_r4.h
@@ -24,10 +24,17 @@ tests/test_sensor.o: tests/test_sensor.c sensor.h iom361_r4.h
 tests/test_sensor: tests/test_sensor.o sensor.o iom361_r4.o
 	$(CC) $(CFLAGS) tests/test_sensor.o sensor.o iom361_r4.o -o tests/test_sensor $(LDLIBS)
 
-test: pump tests/test_sensor
+tests/test_store.o: tests/test_store.c store.h sensor.h fsm.h
+	$(CC) $(CFLAGS) -I. -c tests/test_store.c -o tests/test_store.o
+
+tests/test_store: tests/test_store.o store.o
+	$(CC) $(CFLAGS) tests/test_store.o store.o -o tests/test_store $(LDLIBS)
+
+test: pump tests/test_sensor tests/test_store
 	./tests/test_sensor
+	./tests/test_store
 
 clean:
-	rm -f *.o tests/*.o pump tests/test_sensor
+	rm -f *.o tests/*.o pump tests/test_sensor tests/test_store
 
 .PHONY: test clean

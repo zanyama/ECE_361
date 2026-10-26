@@ -8,3 +8,4 @@ project/tests/test_sensor
 hw04/events
 hw04/tests/test_tally
 *.sublime-workspace
+project/tests/test_store

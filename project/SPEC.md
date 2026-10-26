@@ -23,3 +23,9 @@ From the temperature:
 - CARD during PUMPING
 - HANG_UP while AUTHORIZED
 - TRIGGER squeezed while PAUSED for vapor
+
+## Records and the store
+`record_t` (in `store.h`): the `reading_t`, the `fsm_state_t` at that tick,
+and the `uint32_t` status word. Key: humidity rounded down to a whole
+percent. For now the store is a sorted array; equal keys go after the
+ones already there.
