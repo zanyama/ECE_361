@@ -5,3 +5,6 @@ hw02/tests/test_stats
 project/pump
 hw03/tests/test_ptr
 project/tests/test_sensor
+hw04/events
+hw04/tests/test_tally
+*.sublime-workspace

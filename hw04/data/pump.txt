@@ -1,0 +1,19 @@
+# fuel pump: two sales, one interrupted by heat
+CARD
+TRIGGER_ON
+TRIGGER_OFF
+TRIGGER_ON
+LIMIT_REACHED
+HANG_UP
+DONE_TIMEOUT
+
+# second customer
+CARD
+TRIGGER_ON
+TEMP_HIGH
+TEMP_OK
+TRIGGER_ON
+HANG_UP
+DONE_TIMEOUT
+# one bad line, so "lines skipped" is not 0
+TRIGGER_SQUEEZED_HARD
