@@ -9,3 +9,6 @@ hw04/events
 hw04/tests/test_tally
 *.sublime-workspace
 project/tests/test_store
+hw05/lock
+hw05/tests/test_lock
+hw05/tests/test_check
