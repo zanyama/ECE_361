@@ -51,48 +51,11 @@ or FAIL per check and a summary, and exits nonzero if any check fails.
 
 ## State diagram
 
-```mermaid
-stateDiagram-v2
-    [*] --> LOCKED
-    LOCKED --> GOT1: RIGHT (3)
-    GOT1 --> GOT2: RIGHT (1)
-    GOT2 --> OPEN: RIGHT (4) / UNLOCK
-    GOT1 --> LOCKED: WRONG / BEEP, TIMEOUT
-    GOT2 --> LOCKED: WRONG / BEEP, TIMEOUT
-    OPEN --> LOCKED: CLOSE / LOCK, TIMEOUT / LOCK
-    LOCKED --> LOCKED: WRONG / BEEP, CLOSE, TIMEOUT
-    GOT1 --> GOT1: CLOSE
-    GOT2 --> GOT2: CLOSE
-    OPEN --> OPEN: RIGHT, WRONG
-```
+![The lock's state diagram](state_diagram.svg)
 
-<details>
-<summary>The same diagram as text</summary>
-
-                RIGHT (3)          RIGHT (1)          RIGHT (4) / UNLOCK
-    +--------+           +------+           +------+              +------+
-    | LOCKED | --------> | GOT1 | --------> | GOT2 | -----------> | OPEN |
-    +--------+           +------+           +------+              +------+
-      ^  ^  ^                |                  |                     |
-      |  |  |                |                  |                     |
-      |  |  +----------------+                  |                     |
-      |  |   WRONG / BEEP, TIMEOUT              |                     |
-      |  |                                      |                     |
-      |  +--------------------------------------+                     |
-      |      WRONG / BEEP, TIMEOUT                                    |
-      |                                                               |
-      +---------------------------------------------------------------+
-             CLOSE / LOCK, TIMEOUT / LOCK
-
-    Stays in the same state:
-      LOCKED: WRONG / BEEP, CLOSE, TIMEOUT
-      GOT1:   CLOSE
-      GOT2:   CLOSE
-      OPEN:   RIGHT, WRONG (digits do nothing)
-
-</details>
-
-An arrow without an action does A_NONE.
+Each label is an event, and its color is the action the transition
+takes; gray means A_NONE. CORRECT is E_RIGHT, the next digit of the
+code.
 
 ## Transition table
 Each cell is the next state and the action.
