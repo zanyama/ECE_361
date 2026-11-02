@@ -54,8 +54,8 @@ or FAIL per check and a summary, and exits nonzero if any check fails.
 ![The lock's state diagram](state_diagram.svg)
 
 Each label is an event, and its color is the action the transition
-takes; gray means A_NONE. CORRECT is E_RIGHT, the next digit of the
-code.
+takes; gray means A_NONE. RIGHT is the next digit of the code, WRONG
+is any other digit.
 
 ## Transition table
 Each cell is the next state and the action.

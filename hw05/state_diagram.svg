@@ -12,9 +12,9 @@
   <polygon points="262,325 278,325 270,339" fill="#57606a"/>
   <polygon points="259,461 281,461 270,479" fill="#1a7f37"/>
   <g font-size="13" fill="#57606a">
-    <text x="284" y="159">CORRECT</text>
-    <text x="284" y="299">CORRECT</text>
-    <text x="284" y="439" fill="#1a7f37" font-weight="600">CORRECT</text>
+    <text x="284" y="159">RIGHT</text>
+    <text x="284" y="299">RIGHT</text>
+    <text x="284" y="439" fill="#1a7f37" font-weight="600">RIGHT</text>
   </g>
 
   <!-- back to LOCKED, one lane each -->
@@ -64,7 +64,7 @@
     <text x="146" y="364">CLOSE</text>
     <text x="146" y="380" font-size="11">(ignored while typing)</text>
 
-    <text x="146" y="504">any digit</text>
+    <text x="146" y="504">RIGHT, WRONG</text>
     <text x="146" y="520" font-size="11">(does nothing while open)</text>
   </g>
 
