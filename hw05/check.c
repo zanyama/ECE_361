@@ -20,7 +20,7 @@ static int check_entries(const transition_t table[N_STATES][N_EVENTS],
         for (int e = 0; e < N_EVENTS; e++) {
             const transition_t *t = &table[s][e];
 
-            // "left out"- if it was initialized to 0
+            // "left out"- if action is undefined
             if (t->action == A_UNDEFINED) {
                 if (out != NULL) {
                     fprintf(out, "undefined: %s %s\n", state_name(s),
@@ -40,7 +40,7 @@ static int check_entries(const transition_t table[N_STATES][N_EVENTS],
             }
         }
     }
-
+    // returns number of problems, logged in out
     return problems;
 }
 
