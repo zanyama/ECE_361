@@ -5,6 +5,7 @@
 static int total = 0;
 static int failures = 0;
 
+/* Integer check: passes if got equals want; counts the check either way */
 static void check_int(const char *name, int got, int want) {
     total++;
     if (got == want) {
@@ -16,6 +17,7 @@ static void check_int(const char *name, int got, int want) {
     }
 }
 
+/* string check: passes if got and want have the same characters */
 static void check_str(const char *name, const char *got, const char *want) {
     total++;
     if (strcmp(got, want) == 0) {
@@ -29,13 +31,19 @@ static void check_str(const char *name, const char *got, const char *want) {
 
 /* one table entry: lock_step(s, e) must go to next and do action */
 static void check_step(state_t s, event_t e, state_t next, action_t action) {
+
+    /* build the check's name, e.g. "table GOT2 RIGHT -> OPEN UNLOCK";
+       sizeof name keeps snprintf from writing past the end of name */
     char name[64];
     snprintf(name, sizeof name, "table %s %s -> %s %s", state_name(s),
              event_name(e), state_name(next), action_name(action));
 
+    /* start got_action as A_UNDEFINED, so if lock_step forgot to fill it
+       in, the check fails instead of reading leftover garbage */
     action_t got_action = A_UNDEFINED;
     state_t got_next = lock_step(s, e, &got_action);
 
+    // passes only if both the next state and the action match
     total++;
     if (got_next == next && got_action == action) {
         printf("PASS %s\n", name);
@@ -55,11 +63,11 @@ static state_t run(const char *input, action_t *last) {
 
     for (int i = 0; input[i] != '\0'; i++) {
         int e = lock_event(s, input[i]);
+        // skip characters that are not events, like main.c does
         if (e >= 0) {
             s = lock_step(s, (event_t) e, last);
         }
     }
-
     return s;
 }
 
@@ -87,11 +95,11 @@ int main(void) {
     check_step(OPEN,   E_CLOSE,   LOCKED, A_LOCK);
     check_step(OPEN,   E_TIMEOUT, LOCKED, A_LOCK);
 
-    /* no entry was left out */
+    // make sure no entry was left undefined:
     int undefined = 0;
     for (int s = 0; s < N_STATES; s++) {
         for (int e = 0; e < N_EVENTS; e++) {
-            undefined += lock_table[s][e].action == A_UNDEFINED;
+            undefined += (lock_table[s][e].action == A_UNDEFINED);
         }
     }
     check_int("table: no A_UNDEFINED entries", undefined, 0);
@@ -112,47 +120,52 @@ int main(void) {
     check_int("event OPEN 4: WRONG",   lock_event(OPEN, '4'),   E_WRONG);
     check_int("event OPEN 0: WRONG",   lock_event(OPEN, '0'),   E_WRONG);
 
-    /* c and t in every state */
+    /* a bad state has no next digit either, so code[] is never read past
+       its end */
+    check_int("event bad state 3: WRONG", lock_event(N_STATES, '3'), E_WRONG);
+    check_int("event -1 3: WRONG",        lock_event(-1, '3'),       E_WRONG);
+
+    /* close and timeout in every state */
     for (int s = 0; s < N_STATES; s++) {
         char name[64];
-        snprintf(name, sizeof name, "event %s c: CLOSE", state_name(s));
+        snprintf(name,  sizeof name, "event %s c: CLOSE",   state_name(s));
         check_int(name, lock_event(s, 'c'), E_CLOSE);
-        snprintf(name, sizeof name, "event %s t: TIMEOUT", state_name(s));
+        snprintf(name,  sizeof name, "event %s t: TIMEOUT", state_name(s));
         check_int(name, lock_event(s, 't'), E_TIMEOUT);
     }
 
-    /* other characters are not events */
-    check_int("event x: -1",       lock_event(LOCKED, 'x'),  -1);
-    check_int("event C: -1",       lock_event(LOCKED, 'C'),  -1);
-    check_int("event space: -1",   lock_event(GOT1, ' '),    -1);
-    check_int("event newline: -1", lock_event(GOT2, '\n'),   -1);
-    check_int("event NUL: -1",     lock_event(OPEN, '\0'),   -1);
+    /* other characters that are not events */
+    check_int("event x:       -1", lock_event(LOCKED, 'x'), -1);
+    check_int("event C:       -1", lock_event(LOCKED, 'C'), -1);
+    check_int("event space:   -1", lock_event(GOT1, ' '),   -1);
+    check_int("event newline: -1", lock_event(GOT2, '\n'),  -1);
+    check_int("event NUL:     -1", lock_event(OPEN, '\0'),  -1);
 
-    /* sequences */
-    check_int("3 1 4 opens", run("314", &last), OPEN);
-    check_int("3 1 4 last action UNLOCK", last, A_UNLOCK);
+    /* test various number sequences */
+    check_int("3 1 4 opens",               run("314", &last),   OPEN);
+    check_int("3 1 4 last action UNLOCK",               last,   A_UNLOCK);
 
-    check_int("3 3 1 4 does not open", run("3314", &last), LOCKED);
-    check_int("3 3 1 4 last action BEEP", last, A_BEEP);
+    check_int("3 3 1 4 does not open",    run("3314", &last),   LOCKED);
+    check_int("3 3 1 4 last action BEEP",               last,   A_BEEP);
 
-    check_int("3 1 t 4 does not open", run("31t4", &last), LOCKED);
-    check_int("3 1 t 4 last action BEEP", last, A_BEEP);
+    check_int("3 1 t 4 does not open",    run("31t4", &last),   LOCKED);
+    check_int("3 1 t 4 last action BEEP",               last,   A_BEEP);
 
-    check_int("3 1 4 c locks again", run("314c", &last), LOCKED);
-    check_int("3 1 4 c last action LOCK", last, A_LOCK);
+    check_int("3 1 4 c locks again",      run("314c", &last),   LOCKED);
+    check_int("3 1 4 c last action LOCK",               last,   A_LOCK);
 
-    check_int("3 1 4 t locks again", run("314t", &last), LOCKED);
-    check_int("3 c 1 4 still opens", run("3c14", &last), OPEN);
-    check_int("3 1 4 9 stays open", run("3149", &last), OPEN);
-    check_int("3 1 5 3 1 4 opens", run("315314", &last), OPEN);
+    check_int("3 1 4 t locks again",      run("314t", &last),   LOCKED);
+    check_int("3 c 1 4 still opens",      run("3c14", &last),   OPEN);
+    check_int("3 1 4 9 stays open",       run("3149", &last),   OPEN);
+    check_int("3 1 5 3 1 4 opens",        run("315314", &last), OPEN);
 
     /* names, and "?" out of range */
-    check_str("state_name GOT2",    state_name(GOT2),     "GOT2");
-    check_str("state_name -1",      state_name(-1),       "?");
-    check_str("state_name N_STATES", state_name(N_STATES), "?");
-    check_str("event_name TIMEOUT", event_name(E_TIMEOUT), "TIMEOUT");
-    check_str("event_name N_EVENTS", event_name(N_EVENTS), "?");
-    check_str("action_name UNLOCK", action_name(A_UNLOCK), "UNLOCK");
+    check_str("state_name GOT2",       state_name(GOT2),       "GOT2");
+    check_str("state_name -1",         state_name(-1),         "?");
+    check_str("state_name N_STATES",   state_name(N_STATES),   "?");
+    check_str("event_name TIMEOUT",    event_name(E_TIMEOUT),  "TIMEOUT");
+    check_str("event_name N_EVENTS",   event_name(N_EVENTS),   "?");
+    check_str("action_name UNLOCK",    action_name(A_UNLOCK),  "UNLOCK");
     check_str("action_name N_ACTIONS", action_name(N_ACTIONS), "?");
 
     printf("\n%d of %d passed\n", total - failures, total);

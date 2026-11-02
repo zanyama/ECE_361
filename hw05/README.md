@@ -42,7 +42,8 @@ locked, and a wrong digit in the middle followed by the right code.
 tests/test_lock.c checks every one of the 16 table entries (next state
 and action, written out in the test, not read from lock_table), that no
 entry is A_UNDEFINED, lock_step with a NULL action, lock_event for a
-right and a wrong digit in each state and for digits while open, c and
+right and a wrong digit in each state, for digits while open and in a
+bad state, c and
 t in every state, other characters (-1), the sequences 3 1 4 (opens),
 3 3 1 4 (does not), 3 1 t 4 (does not), and 3 1 4 c (locks again) plus
 a few more, and the names, including "?" out of range. It prints PASS

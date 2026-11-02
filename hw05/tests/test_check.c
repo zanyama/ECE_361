@@ -6,6 +6,7 @@
 static int total = 0;
 static int failures = 0;
 
+/* passes if got equals want; counts the check either way */
 static void check_int(const char *name, int got, int want) {
     total++;
     if (got == want) {
@@ -17,6 +18,7 @@ static void check_int(const char *name, int got, int want) {
     }
 }
 
+/* the same for strings: passes if got and want have the same characters */
 static void check_str(const char *name, const char *got, const char *want) {
     total++;
     if (strcmp(got, want) == 0) {
@@ -34,14 +36,18 @@ static int check_to(const transition_t table[N_STATES][N_EVENTS],
                     state_t start, char *buf, size_t size) {
     buf[0] = '\0';
 
+    // a temporary file, deleted automatically when it is closed
     FILE *f = tmpfile();
     if (f == NULL) {
         return -1;
     }
 
     int n = fsm_check(table, start, f);
+
+    // back to the start of the file, to read what fsm_check wrote
     rewind(f);
 
+    // at most size - 1 bytes, leaving room for the '\0'
     size_t got = fread(buf, 1, size - 1, f);
     buf[got] = '\0';
 
@@ -59,13 +65,16 @@ static void check_table(const char *name,
 
     int n = check_to(table, start, out, sizeof out);
 
+    // two checks: the number of problems, then the exact text printed
     snprintf(label, sizeof label, "%s: %d problems", name, want_n);
     check_int(label, n, want_n);
     snprintf(label, sizeof label, "%s: output", name);
     check_str(label, out, want_out);
 
-    // show what the checker printed
-    for (char *line = strtok(out, "\n"); line != NULL; line = strtok(NULL, "\n")) {
+    /* show what the checker printed, one line at a time: strtok splits out
+       at each '\n' (it changes out, which is fine since we're done with it) */
+    for (char *line = strtok(out, "\n"); line != NULL;
+         line = strtok(NULL, "\n")) {
         printf("    %s\n", line);
     }
 }
