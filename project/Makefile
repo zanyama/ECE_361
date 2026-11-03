@@ -30,11 +30,18 @@ tests/test_store.o: tests/test_store.c store.h sensor.h fsm.h
 tests/test_store: tests/test_store.o store.o
 	$(CC) $(CFLAGS) tests/test_store.o store.o -o tests/test_store $(LDLIBS)
 
-test: pump tests/test_sensor tests/test_store
+tests/test_fsm.o: tests/test_fsm.c fsm.h
+	$(CC) $(CFLAGS) -I. -c tests/test_fsm.c -o tests/test_fsm.o
+
+tests/test_fsm: tests/test_fsm.o fsm.o
+	$(CC) $(CFLAGS) tests/test_fsm.o fsm.o -o tests/test_fsm $(LDLIBS)
+
+test: pump tests/test_sensor tests/test_store tests/test_fsm
 	./tests/test_sensor
 	./tests/test_store
+	./tests/test_fsm
 
 clean:
-	rm -f *.o tests/*.o pump tests/test_sensor tests/test_store
+	rm -f *.o tests/*.o pump tests/test_sensor tests/test_store tests/test_fsm
 
 .PHONY: test clean
