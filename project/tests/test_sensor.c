@@ -3,6 +3,7 @@
 #include "iom361_r4.h"
 #include "sensor.h"
 
+/* create ints to track total number of tests and number of failures */
 static int total = 0;
 static int failures = 0;
 

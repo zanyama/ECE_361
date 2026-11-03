@@ -1,13 +1,10 @@
 #ifndef FSM_H
 #define FSM_H
 
-/*
- * fsm: the state machine of the fuel pump.
- * Will define the event enum, the transition table, and one function
- * that takes the current state and an event and returns the next state.
- */
+/* fsm: the Finite State Machine of the fuel pump.
+   Defines the event, state, and action enums, the transition table, and fsm_step() */
 
-/* the five states the project sheet gives; IDLE is the initial state */
+/* the 5 states the project sheet gives; STATE_IDLE is the initial state */
 typedef enum {
     STATE_IDLE,
     STATE_AUTHORIZED,
@@ -16,7 +13,6 @@ typedef enum {
     STATE_COMPLETE,
     STATE_COUNT
 } fsm_state_t;
-
 
 /* the 9 events */
 typedef enum {
@@ -32,7 +28,8 @@ typedef enum {
     EVENT_COUNT
 } fsm_event_t;
 
-// The 7 actions
+/* The 7 actions. UNDEFINED is first, so an entry left out shows up as UNDEFINED,
+   instead of a real action */
 typedef enum {
     ACTION_UNDEFINED,
     ACTION_START_SALE,
@@ -50,14 +47,12 @@ typedef struct { fsm_state_t next; fsm_action_t action; } fsm_transition_t;
 /* the transition table:      fsm_table[state][event] */
 extern const fsm_transition_t fsm_table[STATE_COUNT][EVENT_COUNT];
 
-/*
-fsm_step: takes one transition, by looking it up in fsm table
+/* fsm_step: takes one transition, by looking it up in fsm table
 
     Takes:   the current state, an event, and where to put the action
     Returns: the next state; *action is set to the transition's action
              (if action is not NULL)
-    Assumes: s < STATE_COUNT and e < EVENT_COUNT
-*/
+    Assumes: s < STATE_COUNT and e < EVENT_COUNT */
 fsm_state_t fsm_step(fsm_state_t s, fsm_event_t e, fsm_action_t *action);
 
 #endif

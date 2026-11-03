@@ -1,3 +1,5 @@
+/* fsm.c: see fsm.h for each function's contract */
+
 #include <stddef.h> /* NULL */
 #include "fsm.h"
 
@@ -18,9 +20,9 @@ const fsm_transition_t fsm_table[STATE_COUNT][EVENT_COUNT] = {
         [EVENT_TEMP_OK]       = { STATE_IDLE,       ACTION_NONE       },
     },
 
-    /* AUTHORIZED: a squeeze starts the motor. hanging up or waiting
-       60 ticks cancels the sale, lamp off. too hot: PAUSED, nothing
-       changes but the color */
+    /* AUTHORIZED: a trigger squeeze starts the motor. hanging up or
+       waiting 60 ticks cancels the sale, lamp off. too hot: PAUSED,
+       nothing changes but the color */
     [STATE_AUTHORIZED] = {
         [EVENT_CARD]          = { STATE_AUTHORIZED, ACTION_NONE     },
         [EVENT_TRIGGER_ON]    = { STATE_PUMPING,    ACTION_MOTOR_ON },

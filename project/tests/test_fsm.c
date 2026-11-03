@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include "fsm.h"
 
+/* create ints to track total number of tests and number of failures */
 static int total = 0;
 static int failures = 0;
 
+/* check_int() borrowed from other test file: compares got and want */
 static void check_int(const char *name, int got, int want) {
     total++;
     if (got == want) {
@@ -15,17 +17,25 @@ static void check_int(const char *name, int got, int want) {
     }
 }
 
+/* checks one table entry: starting at state s with event e, the FSM should go to want_next and do want_action */
 static void check_step(const char *name, fsm_state_t s, fsm_event_t e, fsm_state_t want_next, fsm_action_t want_action) {
+    // buffer to store the print string
     char label[64];
+
+    // fsm_step returns the next state and writes the action into action through &action
     fsm_action_t action;
     fsm_state_t next = fsm_step(s, e, &action);
+
+    // check next state with expected state
     snprintf(label, sizeof label, "%s: next", name);
     check_int(label, next, want_next);
+
+    // check produced action with expected action
     snprintf(label, sizeof label, "%s: action", name);
     check_int(label, action, want_action);
 }
 
-/* checks various steps through the FSM */
+/* checks the 12 rows that change state, plus the SPEC decisions and one safety row (IDLE+TRIGGER_ON) */
 int main(void) {
     check_step("IDLE+CARD",               STATE_IDLE,       EVENT_CARD,          STATE_AUTHORIZED, ACTION_START_SALE);
     check_step("IDLE+TRIGGER_ON",         STATE_IDLE,       EVENT_TRIGGER_ON,    STATE_IDLE,       ACTION_NONE);
