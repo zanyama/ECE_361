@@ -20,7 +20,7 @@ From the switches:
 - HANG_UP: nozzle back in its holder (press, bit 2 going 0 to 1)
 
 From time and the sale:
-- AUTH_TIMEOUT: 60 ticks in AUTHORIZED without TRIGGER
+- AUTH_TIMEOUT: 60 ticks in AUTHORIZED or PAUSED without TRIGGER
 - LIMIT_REACHED: 40 liters pumped
 - DONE_TIMEOUT: 5 ticks in COMPLETE
 
@@ -41,6 +41,21 @@ From the temperature:
   the same as AUTH_TIMEOUT. The timeout only guesses the customer left;
   hanging up says so, and it closes the window where someone else could
   pump on their card.
+
+- TEMP_HIGH while AUTHORIZED: goes to PAUSED, the same place PUMPING goes
+  when it gets too hot. The motor is not on yet, so the action is NONE;
+  only the color changes. The sale stays open: once it is back at or
+  below 42.0 C, a new squeeze starts pumping.
+
+- HANG_UP while PAUSED: ends the sale (COMPLETE, lamp off; the motor is
+  already off), even if 0 liters were pumped. Hanging up says the
+  customer is done, the same as it does while PUMPING, and COMPLETE
+  shows whatever was pumped, 0 included.
+
+- AUTH_TIMEOUT while PAUSED: regardless of how much has been pumped, complete
+  the sale (COMPLETE, lamp off). If that much time has passed, we can assume
+  the customer is done. The 60 ticks count only while it is not too hot, so a
+  vapor pause never ends a sale on its own.
 
 ## Records and the store
 `record_t` (in `store.h`): the `reading_t`, the `fsm_state_t` at that tick,

@@ -48,13 +48,14 @@ const fsm_transition_t fsm_table[STATE_COUNT][EVENT_COUNT] = {
     },
 
     /* PAUSED: a new squeeze resumes (main.c holds back TRIGGER_ON
-       while it is too hot). hanging up ends the sale, lamp off */
+       while it is too hot). hanging up or waiting 60 ticks ends
+       the sale, lamp off */
     [STATE_PAUSED] = {
         [EVENT_CARD]          = { STATE_PAUSED,   ACTION_NONE     },
         [EVENT_TRIGGER_ON]    = { STATE_PUMPING,  ACTION_MOTOR_ON },
         [EVENT_TRIGGER_OFF]   = { STATE_PAUSED,   ACTION_NONE     },
         [EVENT_HANG_UP]       = { STATE_COMPLETE, ACTION_LAMP_OFF },
-        [EVENT_AUTH_TIMEOUT]  = { STATE_PAUSED,   ACTION_NONE     },
+        [EVENT_AUTH_TIMEOUT]  = { STATE_COMPLETE, ACTION_LAMP_OFF },
         [EVENT_LIMIT_REACHED] = { STATE_PAUSED,   ACTION_NONE     },
         [EVENT_DONE_TIMEOUT]  = { STATE_PAUSED,   ACTION_NONE     },
         [EVENT_TEMP_HIGH]     = { STATE_PAUSED,   ACTION_NONE     },
