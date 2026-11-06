@@ -69,6 +69,11 @@ int main(void) {
     check_int("led: invalid LED number", panel_led(&reg, 32, 0), -1);
     check_int("led: invalid LED number: register unchanged", reg, 0xA);
 
+    // the other edge: LED -1 is invalid too (1u << -1 would be undefined)
+    reg = 0xA;
+    check_int("led: LED -1 is invalid", panel_led(&reg, -1, 1), -1);
+    check_int("led: LED -1: register unchanged", reg, 0xA);
+
     // sensor: set 91.0 C in the "world", read it back through the registers
     int rc;
     uint32_t *base = iom361_initialize(NUM_SWITCHES, NUM_SWITCHES, &rc);
@@ -105,6 +110,18 @@ int main(void) {
     check_int("scenario: no start line -> line 2",   scenario_load("tests/data/nostart.txt", &s), 2);
     check_int("scenario: missing field -> line 3",   scenario_load("tests/data/missing.txt", &s), 3);
     check_int("scenario: tick not increasing -> line 4", scenario_load("tests/data/notinc.txt", &s), 4);
+
+    check_int("scenario: first tick not 0 -> line 3", scenario_load("tests/data/first_tick.txt", &s), 3);
+    check_int("scenario: no data lines -> line 3", scenario_load("tests/data/nodata.txt", &s), 3);
+
+    // scenario: a file that cannot be opened returns -1
+    check_int("scenario: missing file -> -1", scenario_load("tests/data/no_such_file.txt", &s), -1);
+
+    // scenario: the limit. exactly SCENARIO_MAX_LINES data lines load;
+    // one more is bad (file line 1002: the start line plus 1001 data lines)
+    check_int("scenario: 1000 data lines load", scenario_load("tests/data/max.txt", &s), 0);
+    check_int("scenario: 1000 data lines: num_lines", s.num_lines, SCENARIO_MAX_LINES);
+    check_int("scenario: 1001 data lines -> line 1002", scenario_load("tests/data/toomany.txt", &s), 1002);
 
     printf("%d of %d checks passed\n", total - failures, total);
 

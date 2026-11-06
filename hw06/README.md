@@ -75,7 +75,7 @@ that is not 0, more than 1000 data lines, or no data lines at all.
     make clean                         # removes everything the build made
 
 ## Tests
-tests/test_hw06.c (29 checks) prints PASS or FAIL per check and a
+tests/test_hw06.c (37 checks) prints PASS or FAIL per check and a
 summary, and exits nonzero if any check fails, so make test stops
 there. It checks:
 
@@ -84,7 +84,7 @@ there. It checks:
 - panel_led and panel_toggle on a fake register (a plain uint32_t):
   turning an LED on, turning one off, and toggling one each keep the
   other LEDs
-- panel_led with LED 32 (the first invalid number) returns -1 and
+- panel_led with LED 32 and LED -1 (just outside 0 to 31) returns -1 and
   leaves the register unchanged
 - a reading of 91.0 C and 40.0 %RH reads back exactly as 91.0 and 40.0
 - a failed read (wrong base) returns 1 and leaves *r unchanged
@@ -95,6 +95,12 @@ there. It checks:
   - tests/data/nostart.txt: no start line, line 2
   - tests/data/missing.txt: a missing field, line 3
   - tests/data/notinc.txt: ticks that do not increase, line 4
+  - tests/data/first_tick.txt: first tick is not 0, line 3
+  - tests/data/nodata.txt: no data lines, line 3 (the line after the last)
+  - tests/data/toomany.txt: 1001 data lines, line 1002
+- tests/data/max.txt (exactly 1000 data lines) loads, so the limit
+  itself is allowed
+- a file that cannot be opened returns -1
 
 regress.sh runs ./replay on every file in scenarios/ and compares the
 output with the file of the same name in expected/, using diff. The
