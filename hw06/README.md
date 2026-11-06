@@ -32,21 +32,33 @@ and releasing a switch does nothing.
   written by me).
 
 ## How it works
-Each tick, the replay plays the world on the left, and the device code
-on the right sees it only through the registers in the middle. On a
-real board the left column does not exist (the _iom361_set_...
-functions are test functions), so sensor.c and panel.c never call
-them.
+Each tick has two halves. First the replay plays the world: it writes
+the scenario's values into the model. Then the device code reads them
+back through the registers, the only thing a real board's code can see.
+On a real board the world half does not exist (the _iom361_set_...
+functions are test functions), so sensor.c and panel.c never call them.
 
-    scenario line in force       iom361 registers         the device (my code)
-    ----------------------       ----------------         --------------------
-    temp, rh --_iom361_set_sensor1--> TEMP_REG, HUMID_REG --sensor_read--> reading_t
-    switches --_iom361_set_switches-> SWITCHES_REG --iom361_readReg-----> switches
-                                                                            |
-                                                      panel_pressed(switches, before)
-                                                                            |
-                                      LEDS_REG <--panel_toggle (read-modify-write)
-                                      LEDS_REG --iom361_readReg--> leds --> trace line
+    scenario line in force (temp, rh, switches)
+          |
+          |   the world: _iom361_set_sensor1, _iom361_set_switches
+          v
+    iom361 registers (TEMP, HUMID, SWITCHES)
+          |
+          |   the device: sensor_read, iom361_readReg
+          v
+    reading and switches
+          |
+          |   panel_pressed(switches, before)
+          v
+    pressed switches
+          |
+          |   panel_toggle(leds, k) for each pressed switch k
+          v
+    LEDS register
+          |
+          |   iom361_readReg, then printf
+          v
+    one trace line
 
 `before` holds the previous tick's switches, so a held switch is not
 pressed again.
