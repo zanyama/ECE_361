@@ -1,0 +1,12 @@
+2026-10-06 08:00:00 temp=20.0 rh=40.0 switches=0x0 pressed=0x0 leds=0x0
+2026-10-06 08:00:01 temp=20.0 rh=40.0 switches=0x0 pressed=0x0 leds=0x0
+2026-10-06 08:00:02 temp=20.0 rh=40.0 switches=0x3 pressed=0x3 leds=0x3
+2026-10-06 08:00:03 temp=20.0 rh=40.0 switches=0x3 pressed=0x0 leds=0x3
+2026-10-06 08:00:04 temp=20.0 rh=40.0 switches=0x3 pressed=0x0 leds=0x3
+2026-10-06 08:00:05 temp=20.0 rh=40.0 switches=0x1 pressed=0x0 leds=0x3
+2026-10-06 08:00:06 temp=20.0 rh=40.0 switches=0x1 pressed=0x0 leds=0x3
+2026-10-06 08:00:07 temp=20.0 rh=40.0 switches=0x5 pressed=0x4 leds=0x7
+2026-10-06 08:00:08 temp=20.0 rh=40.0 switches=0x5 pressed=0x0 leds=0x7
+2026-10-06 08:00:09 temp=91.0 rh=40.0 switches=0x1 pressed=0x0 leds=0x7
+2026-10-06 08:00:10 temp=91.0 rh=40.0 switches=0x1 pressed=0x0 leds=0x7
+2026-10-06 08:00:11 temp=91.0 rh=40.0 switches=0x5 pressed=0x4 leds=0x3

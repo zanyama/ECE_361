@@ -4,7 +4,7 @@ LDLIBS = -lm
 all: replay
 clean:
 	rm -f *.o replay
-.PHONY: all clean
+.PHONY: all clean test
 
 main.o: main.c iom361_r4.h scenario.h sensor.h panel.h
 scenario.o: scenario.c scenario.h
@@ -17,3 +17,6 @@ replay: main.o scenario.o sensor.o panel.o iom361_r4.o
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
+
+test: replay
+	sh regress.sh
