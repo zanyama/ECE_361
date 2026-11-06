@@ -32,44 +32,29 @@ and releasing a switch does nothing.
   written by me).
 
 ## How it works
-Each tick has two halves. First the replay plays the world: it writes
-the scenario's values into the model. Then the device code reads them
-back through the registers, the only thing a real board's code can see.
-On a real board the world half does not exist (the _iom361_set_...
-functions are test functions), so sensor.c and panel.c never call them.
+Each tick, main.c does these steps in order:
 
-    scenario line in force (temp, rh, switches)
-          |
-          |   the world: _iom361_set_sensor1, _iom361_set_switches
-          v
-    iom361 registers (TEMP, HUMID, SWITCHES)
-          |
-          |   the device: sensor_read, iom361_readReg
-          v
-    reading and switches
-          |
-          |   panel_pressed(switches, before)
-          v
-    pressed switches
-          |
-          |   panel_toggle(leds, k) for each pressed switch k
-          v
-    LEDS register
-          |
-          |   iom361_readReg, then printf
-          v
-    one trace line
-
-`before` holds the previous tick's switches, so a held switch is not
-pressed again.
+1. Finds the scenario line in force (scenario_at).
+2. Plays the world: sets the temperature, humidity, and switches in the
+   model with _iom361_set_sensor1 and _iom361_set_switches. These are
+   test functions; on a real board this step is the physical world, so
+   sensor.c and panel.c never call them.
+3. Reads the sensor (sensor_read) and the switches (iom361_readReg)
+   back through the registers, the way a real board's code would.
+4. Finds the switches just pressed with panel_pressed(switches,
+   before), where `before` is the previous tick's switches, so a held
+   switch is not pressed again.
+5. Toggles LED k for each pressed switch k (panel_toggle).
+6. Reads the LED register back and prints the trace line.
 
 The registers are 32-bit words at byte offsets from base. base is a
 `uint32_t *`, so base + 1 moves 4 bytes, and the LED register is
 `base + LEDS_REG / sizeof(uint32_t)`:
 
-    offset   0x00       0x04      0x08      0x0C      0x10
-    reg      SWITCHES   LEDS      RGB_LED   TEMP      HUMID
-    pointer  base[0]    base[1]   base[2]   base[3]   base[4]
+| offset   | 0x00     | 0x04    | 0x08    | 0x0C    | 0x10    |
+|----------|----------|---------|---------|---------|---------|
+| register | SWITCHES | LEDS    | RGB_LED | TEMP    | HUMID   |
+| pointer  | base[0]  | base[1] | base[2] | base[3] | base[4] |
 
 ## Scenario files
     start 1791273600                # 2026-10-06 08:00:00 UTC
@@ -90,22 +75,31 @@ that is not 0, more than 1000 data lines, or no data lines at all.
     make clean                         # removes everything the build made
 
 ## Tests
-tests/test_hw06.c (29 checks) tests pressed and released for a press,
-a release, and a held switch; panel_led and panel_toggle on a fake
-register (a plain uint32_t) keeping the other LEDs, and LED 32
-rejected with the register unchanged; 91.0 C and 40.0 %RH reading back
-exactly; a failed read (wrong base) returning 1 and leaving *r
-unchanged; a file with comments and blank lines (tests/data/comments.txt);
-values holding between lines at ticks 0, 9, and 10; and the files in
-tests/data/ with no start line, a missing field, and ticks that do not
-increase, which return lines 2, 3, and 4. It prints PASS or FAIL per
-check and a summary, and exits nonzero if any check fails, so make
-test stops there.
+tests/test_hw06.c (29 checks) prints PASS or FAIL per check and a
+summary, and exits nonzero if any check fails, so make test stops
+there. It checks:
+
+- panel_pressed and panel_released for a press, a release, and a held
+  switch
+- panel_led and panel_toggle on a fake register (a plain uint32_t):
+  turning an LED on, turning one off, and toggling one each keep the
+  other LEDs
+- panel_led with LED 32 (the first invalid number) returns -1 and
+  leaves the register unchanged
+- a reading of 91.0 C and 40.0 %RH reads back exactly as 91.0 and 40.0
+- a failed read (wrong base) returns 1 and leaves *r unchanged
+- a file with comments and blank lines everywhere loads with the right
+  lines (tests/data/comments.txt)
+- values hold between lines: scenario_at at ticks 0, 9, and 10
+- bad files return the first bad line: no start line (2), a missing
+  field (3), ticks that do not increase (4)
 
 regress.sh runs ./replay on every file in scenarios/ and compares the
-output with the file of the same name in expected/, using diff.
-basic.txt is the example from the project sheet. multi.txt has two
-switches pressed at once, a held switch, a release, a press while
-another switch is held, 91.0 C, and the same switch pressed again so
-its LED goes back off. The expected traces were checked by hand line
-by line before they were saved.
+output with the file of the same name in expected/, using diff. The
+expected traces were checked by hand line by line before they were
+saved.
+
+- basic.txt: the example from the project sheet
+- multi.txt: two switches pressed at once, a held switch, a release, a
+  press while another switch is held, 91.0 C, and the same switch
+  pressed again so its LED goes back off
