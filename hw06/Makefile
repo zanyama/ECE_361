@@ -22,8 +22,8 @@ test: replay tests/test_hw06
 	./tests/test_hw06
 	sh regress.sh
 
-tests/test_hw06.o: tests/test_hw06.c panel.h sensor.h iom361_r4.h
+tests/test_hw06.o: tests/test_hw06.c panel.h sensor.h iom361_r4.h scenario.h
 	$(CC) $(CFLAGS) -I. -c tests/test_hw06.c -o tests/test_hw06.o
 
-tests/test_hw06: tests/test_hw06.o panel.o sensor.o iom361_r4.o
-	$(CC) $(CFLAGS) tests/test_hw06.o panel.o sensor.o iom361_r4.o -o tests/test_hw06 $(LDLIBS)
+tests/test_hw06: tests/test_hw06.o panel.o sensor.o iom361_r4.o scenario.o
+	$(CC) $(CFLAGS) tests/test_hw06.o panel.o sensor.o iom361_r4.o scenario.o -o tests/test_hw06 $(LDLIBS)

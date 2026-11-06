@@ -1,8 +1,11 @@
 #include "panel.h"
 #include "sensor.h"
 #include "iom361_r4.h"
+#include "scenario.h"
+
 #include <stdio.h>
 #include <stdint.h>
+
 #define NUM_SWITCHES 4
 
 static int total = 0;
@@ -84,6 +87,24 @@ int main(void) {
     check_int("sensor: sensor_read called with WRONG base",sensor_read(base + 1, 0, &r), 1);
     check_float("sensor: temp still -1", r.temp_c, -1.0f);
     check_float("sensor: rh still -1", r.rh_pct, -1.0f);
+
+    // scenario: comments and blank lines are skipped
+    static scenario_t s;
+    check_int("scenario: comments file loads", scenario_load("tests/data/comments.txt", &s), 0);
+    check_int("scenario: comments file has 2 lines", s.num_lines, 2);
+    check_int("scenario: second line's tick",        s.lines[1].tick, 10);
+    check_float("scenario: second line's temp",      s.lines[1].temp_c, 21.5f);
+    check_int("scenario: second line's switches",    s.lines[1].switches, 0x2);
+
+    // scenario: values hold between lines (line in force at tick t)
+    check_int("scenario: tick 0 uses line 0", scenario_at(&s, 0), 0);
+    check_int("scenario: tick 9 uses line 0", scenario_at(&s, 9), 0);
+    check_int("scenario: tick 10 uses line 1", scenario_at(&s, 10), 1);
+
+    // scenario: bad files return the number of the first bad line
+    check_int("scenario: no start line -> line 2",   scenario_load("tests/data/nostart.txt", &s), 2);
+    check_int("scenario: missing field -> line 3",   scenario_load("tests/data/missing.txt", &s), 3);
+    check_int("scenario: tick not increasing -> line 4", scenario_load("tests/data/notinc.txt", &s), 4);
 
     printf("%d of %d checks passed\n", total - failures, total);
 
