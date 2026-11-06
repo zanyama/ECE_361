@@ -91,8 +91,10 @@ there. It checks:
 - a file with comments and blank lines everywhere loads with the right
   lines (tests/data/comments.txt)
 - values hold between lines: scenario_at at ticks 0, 9, and 10
-- bad files return the first bad line: no start line (2), a missing
-  field (3), ticks that do not increase (4)
+- bad files return the number of their first bad line:
+  - tests/data/nostart.txt: no start line, line 2
+  - tests/data/missing.txt: a missing field, line 3
+  - tests/data/notinc.txt: ticks that do not increase, line 4
 
 regress.sh runs ./replay on every file in scenarios/ and compares the
 output with the file of the same name in expected/, using diff. The
