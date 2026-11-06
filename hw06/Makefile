@@ -1,0 +1,19 @@
+CC = gcc
+CFLAGS = -std=c11 -Wall -Wextra
+LDLIBS = -lm
+all: replay
+clean:
+	rm -f *.o replay
+.PHONY: all clean
+
+main.o: main.c iom361_r4.h scenario.h sensor.h panel.h
+scenario.o: scenario.c scenario.h
+sensor.o: sensor.c sensor.h iom361_r4.h
+panel.o: panel.c panel.h
+iom361_r4.o: iom361_r4.c iom361_r4.h
+
+replay: main.o scenario.o sensor.o panel.o iom361_r4.o
+	$(CC) $(CFLAGS) main.o scenario.o sensor.o panel.o iom361_r4.o -o replay $(LDLIBS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@

@@ -13,3 +13,4 @@ project/tests/test_fsm
 hw05/lock
 hw05/tests/test_lock
 hw05/tests/test_check
+hw06/replay
