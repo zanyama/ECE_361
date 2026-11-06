@@ -26,26 +26,24 @@ panel_released: given previous and current states, returns which switches have
 uint32_t panel_released(uint32_t now, uint32_t before);
 
 /*
-panel_led: change panel led state, leaving the others unchanged
+panel_led: turns LED n on or off, leaving the others unchanged
 
     Takes:   base: pointer to the LED register
-             n: the led number (0-31)
-             on: whether to turn the led on (!0) or off (0)
+             n: the LED number (0-31)
+             on: whether to turn the LED on (!0) or off (0)
     Returns: -1 if n is not 0-31, otherwise 0
-
-    Assumes: base is not NULL, points to the LED register, and that the register 
+    Assumes: base is not NULL, points to the LED register, and that the register
              can be read back
 */
 int panel_led(uint32_t *base, int n, int on);
 
 /*
-panel_toggle: flip panel led state, leaving the others unchanged
+panel_toggle: toggles LED n, leaving the others unchanged
 
     Takes:   base: pointer to the LED register
-             n: the led number (0-31)
+             n: the LED number (0-31)
     Returns: -1 if n is not 0-31, otherwise 0
-
-    Assumes: base is not NULL, points to the LED register, and that the register 
+    Assumes: base is not NULL, points to the LED register, and that the register
              can be read back
 */
 int panel_toggle(uint32_t *base, int n);

@@ -36,11 +36,12 @@ int panel_led(uint32_t *base, int n, int on) {
     uint32_t mask = 1u << n;
     uint32_t led;
 
-    // if led is off, use AND w/inverted mask (set to 0)
+    // turning the LED off: use AND with the inverted mask (clears bit n)
     if (on == 0) {
         led = reg & ~mask;
-    } 
-    // any other number, use OR (set to 1)
+    }
+
+    // any other number, use OR (set bit n to 1)
     else {
         led = reg | mask;
     }
@@ -53,7 +54,7 @@ int panel_led(uint32_t *base, int n, int on) {
 
 //toggles LED n, the same way
 int panel_toggle(uint32_t *base, int n) {
-    
+
     // check if n is in valid range
     if (!validRange(n)) {
         return -1;
