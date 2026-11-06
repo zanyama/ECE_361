@@ -1,20 +1,20 @@
 #include "panel.h"
 
-//the switches that went from off to on, one bit per switch
+// the switches that went from off to on, one bit per switch
 uint32_t panel_pressed(uint32_t now, uint32_t before) {
     // before:0 -> ~before:1
     //    now:1
 	return now & ~before;
 }
 
-//the switches that went from on to off
+// the switches that went from on to off
 uint32_t panel_released(uint32_t now, uint32_t before) {
     //            before: 1
     //    now: 0 -> ~now: 1
 	return ~now & before;
 }
 
-/* helper function to check if n is within the valid range (0-31) */
+// helper function to check if n is within the valid range (0-31)
 static int validRange(int n) {
     return n >= 0 && n <= 31;
 }
@@ -46,13 +46,13 @@ int panel_led(uint32_t *base, int n, int on) {
         led = reg | mask;
     }
 
-    // update the LED registry
+    // update the LED register
     *base = led;
 
     return 0;
 }
 
-//toggles LED n, the same way
+// toggles LED n, the same way
 int panel_toggle(uint32_t *base, int n) {
 
     // check if n is in valid range
@@ -67,6 +67,7 @@ int panel_toggle(uint32_t *base, int n) {
     uint32_t mask = 1u << n;
     uint32_t led = reg ^ mask;
 
+    // update the LED register
     *base = led;
 
     return 0;

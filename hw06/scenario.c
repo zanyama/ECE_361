@@ -98,11 +98,13 @@ int scenario_load(const char *file, scenario_t *scenario) {
                 break;
             }
 
-            // update scenario values and go to next line
-            scenario->lines[scenario->num_lines].tick = tick;
-            scenario->lines[scenario->num_lines].temp_c = temp;
-            scenario->lines[scenario->num_lines].rh_pct = rh;
-            scenario->lines[scenario->num_lines].switches = sw;
+            // passed each check: fill the next free slot, then count it
+            scenario_line_t *slot = &scenario->lines[scenario->num_lines];
+
+            slot->tick = tick;
+            slot->temp_c = temp;
+            slot->rh_pct = rh;
+            slot->switches = sw;
             scenario->num_lines ++;
         }
     }
