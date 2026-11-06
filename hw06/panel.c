@@ -1,4 +1,4 @@
- #include "panel.h"
+#include "panel.h"
 
 //the switches that went from off to on, one bit per switch
 uint32_t panel_pressed(uint32_t now, uint32_t before) {
