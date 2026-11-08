@@ -6,8 +6,8 @@
 panel, scenario, main, tests, Makefile, regress.sh) Claude told me the
 next step and explained anything I didn't understand. It gave hints,
 and I wrote the code. After each part, Claude reviewed it and pointed
-out bugs, which I fixed. Before running
-things I'd predict the output first, then run it and compare.
+out bugs, which I fixed. Before running things I'd predict the output
+first, then run it and compare.
 
 **What Claude wrote:**
 - README.md / AI_USAGE.md (Claude drafted, I edited it)
