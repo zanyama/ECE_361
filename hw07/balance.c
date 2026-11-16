@@ -80,6 +80,5 @@ int main(void) {
 
     printf("balanced: %d pairs, deepest %zu\n", pairs, deepest);
     istack_destroy(s);
-
     return 0;
 }
