@@ -1,3 +1,6 @@
+/* istack.h: a stack of int that grows as it fills. istack_t is opaque:
+ * other files hold an istack_t * but can only use it through these functions. */
+
 #ifndef ISTACK_H
 #define ISTACK_H
 

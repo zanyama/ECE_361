@@ -1,0 +1,6 @@
+/* every bracket counts, even in comments: (like these) */
+int main(void) {
+    int a[3] = {1, 2, 3};
+    printf("[%d]\n", a[0]);
+    return 0;
+}

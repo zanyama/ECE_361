@@ -1,3 +1,6 @@
+/* istack.c: the stack. The values live in one array on the heap that
+ * starts with room for ISTACK_START and doubles with realloc when full. */
+
 #include <stdlib.h>
 #include "istack.h"
 

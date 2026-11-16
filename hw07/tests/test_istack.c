@@ -1,3 +1,6 @@
+/* test_istack.c: unit tests for istack. Prints PASS or FAIL per check and a
+ * summary, and exits nonzero if any check fails, so make test stops. */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "istack.h"
