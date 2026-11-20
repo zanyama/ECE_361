@@ -46,8 +46,24 @@ int main(void) {
     check_size("31 in 3 visits", visits, 3);
     check_bool("15 not found", bst_contains(newTree, 15, &visits), false);
     check_size("15 in 3 visits", visits, 3);
-
     bst_destroy(newTree);
+
+    bst_t *dupeTree = bst_create();
+    bst_insert(dupeTree, 69);
+    bst_insert(dupeTree, 69);
+    check_size("pass a value twice: size is 2", bst_size(dupeTree), 2);
+    check_size("pass a value twice: height is 2", bst_height(dupeTree), 2);
+    bst_destroy(dupeTree);
+
+    bst_t *incTree = bst_create();
+    for (int i = 0; i < 10; i ++) {
+        bst_insert(incTree, i);
+    }
+    check_size("insert 0-9: size is 10", bst_size(incTree), 10);
+    check_size("insert 0-9: height is 10", bst_height(incTree), 10);
+    bst_destroy(incTree);
+
+
     printf("%d/%d passed\n", total - failures, total);
     return failures != 0;
 }
