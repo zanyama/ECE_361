@@ -83,3 +83,30 @@ int bst_insert(bst_t *t, int key) {
         }
    }
 }
+
+/* ported from search() in provided file*/
+bool bst_contains(const bst_t *t, int key, size_t *visits) {
+    const struct node *current = t->root;
+
+    while(current->data != key) {
+        if(current != NULL) {
+
+            // data @ current node > data we are looking for
+            // so we need to traverse the path where data < data current node
+            // go to left tree
+            if(current->data > key) {
+                current = current->leftChild;
+            }
+            //else go to right tree
+            else {
+                current = current->rightChild;
+            }
+
+            //not found
+            if(current == NULL) {
+                return NULL;
+            }
+        }
+    }
+   return current;
+}
