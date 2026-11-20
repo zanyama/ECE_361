@@ -98,6 +98,11 @@ bool bst_contains(const bst_t *t, int key, size_t *visits) {
     }
     const struct node *current = t->root;
     size_t count = 0;
+    if (current == NULL) {
+        set_visits(visits, 0);
+        return false;
+    }
+
     while (current->data != key) {
         if (current != NULL) {
             count ++;

@@ -64,7 +64,7 @@ int main(void) {
     bst_destroy(incTree);
 
     bst_t *blankTree = bst_create();
-    visits = 0;
+    visits = 99;
     check_bool("create blank tree, check if it contains 5", bst_contains(blankTree, 5, &visits), false);
     check_size("create blank tree, visits is 0", visits, 0);
 
