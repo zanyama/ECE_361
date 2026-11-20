@@ -158,3 +158,20 @@ size_t bst_height(const bst_t *t) {
 
     return node_height(t->root);
 }
+
+/* helper function to destroy a node */
+static void node_destroy(struct node *n) {
+    if (n != NULL) {
+        node_destroy(n->leftChild);
+        node_destroy(n->rightChild);
+        free(n);
+    }
+}
+
+/* new function, becuase the original never freed anything*/
+void bst_destroy(bst_t *t) {
+    if (t != NULL) {
+        node_destroy(t->root);
+        free(t);
+    }
+}
