@@ -83,13 +83,17 @@ int bst_insert(bst_t *t, int key) {
    }
 }
 
+/* helper function to store n in *visits, unless it is NULL */
+static void set_visits(size_t *visits, size_t count) {
+    if (visits != NULL) {
+        *visits = count;
+    }
+}
+
 /* from the original's search(), without printing*/
 bool bst_contains(const bst_t *t, int key, size_t *visits) {
     if (t == NULL) {
-        if (visits != NULL) {
-            *visits = 0;
-
-        }
+        set_visits(visits, 0);
         return false;
     }
     const struct node *current = t->root;
@@ -111,16 +115,12 @@ bool bst_contains(const bst_t *t, int key, size_t *visits) {
 
         //not found
         if (current == NULL) {
-            if (visits != NULL) {
-                *visits = count;
-            }
+            set_visits(visits, count);
             return false;
         }
     }
     count ++; /* the while loop exited without returning, which means the key was found */
-    if (visits != NULL) {
-        *visits = count;
-    }
+    set_visits(visits, count);
     return true;
 }
 
