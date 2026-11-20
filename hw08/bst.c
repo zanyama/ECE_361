@@ -131,3 +131,30 @@ size_t bst_size(const bst_t *t) {
     }
     return t->count;
 }
+
+/* new function, recursive helper function to determine height of a node */
+static size_t node_height(const struct node *n) {
+    if (n == NULL) {
+        return 0;
+    }
+    size_t left = node_height(n->leftChild);
+    size_t right = node_height(n->rightChild);
+    size_t longer;
+    if (left > right) {
+        longer = left;
+    }
+    else {
+        longer = right;
+    }
+
+    return longer + 1;
+}
+
+/* new function, original had no height function */
+size_t bst_height(const bst_t *t) {
+    if (t == NULL) {
+        return 0;
+    }
+
+    return node_height(t->root);
+}
