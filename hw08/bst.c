@@ -2,7 +2,6 @@
 #include "bst.h"
 #include <stdlib.h>
 
-
 /* from the original file's struct node, unchanged: */
 struct node {
    int data;
@@ -48,7 +47,7 @@ int bst_insert(bst_t *t, int key) {
     struct node *parent;
 
     //if tree is empty
-    if(t->root == NULL) {
+    if (t->root == NULL) {
         t->root = tempNode;
         t->count ++;
         return 0;
@@ -57,14 +56,14 @@ int bst_insert(bst_t *t, int key) {
         current = t->root;
         parent = NULL;
 
-        while(1) {
+        while (1) {
             parent = current;
 
             //go to left of the tree
-            if(key < parent->data) {
+            if (key < parent->data) {
                 current = current->leftChild;
                 //insert to the left
-                if(current == NULL) {
+                if (current == NULL) {
                    parent->leftChild = tempNode;
                    t->count ++;
                    return 0;
@@ -74,7 +73,7 @@ int bst_insert(bst_t *t, int key) {
                 current = current->rightChild;
 
                 //insert to the right
-                if(current == NULL) {
+                if (current == NULL) {
                    parent->rightChild = tempNode;
                    t->count ++;
                    return 0;
@@ -84,29 +83,51 @@ int bst_insert(bst_t *t, int key) {
    }
 }
 
-/* ported from search() in provided file*/
+/* from the original's search(), without printing*/
 bool bst_contains(const bst_t *t, int key, size_t *visits) {
+    if (t == NULL) {
+        if (visits != NULL) {
+            *visits = 0;
+
+        }
+        return false;
+    }
     const struct node *current = t->root;
+    size_t count = 0;
+    while (current->data != key) {
+        if (current != NULL) {
+            count ++;
+        }
+        // data @ current node > data we are looking for
+        // so we need to traverse the path where data < data current node
+        // go to left tree
+        if(current->data > key) {
+            current = current->leftChild;
+        }
+        //else go to right tree
+        else {
+            current = current->rightChild;
+        }
 
-    while(current->data != key) {
-        if(current != NULL) {
-
-            // data @ current node > data we are looking for
-            // so we need to traverse the path where data < data current node
-            // go to left tree
-            if(current->data > key) {
-                current = current->leftChild;
+        //not found
+        if (current == NULL) {
+            if (visits != NULL) {
+                *visits = count;
             }
-            //else go to right tree
-            else {
-                current = current->rightChild;
-            }
-
-            //not found
-            if(current == NULL) {
-                return NULL;
-            }
+            return false;
         }
     }
-   return current;
+    count ++; /* the while loop exited without returning, which means the key was found */
+    if (visits != NULL) {
+        *visits = count;
+    }
+    return true;
+}
+
+/* new function: original had no size function */
+size_t bst_size(const bst_t *t) {
+    if (t == NULL) {
+        return 0;
+    }
+    return t->count;
 }
