@@ -63,6 +63,12 @@ int main(void) {
     check_size("insert 0-9: height is 10", bst_height(incTree), 10);
     bst_destroy(incTree);
 
+    bst_t *blankTree = bst_create();
+    visits = 0;
+    check_bool("create blank tree, check if it contains 5", bst_contains(blankTree, 5, &visits), false);
+    check_size("create blank tree, visits is 0", visits, 0);
+
+    bst_destroy(blankTree);
 
     printf("%d/%d passed\n", total - failures, total);
     return failures != 0;
