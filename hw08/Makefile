@@ -6,7 +6,7 @@ LDFLAGS =
 # -fno-sanitize-recover=all makes UBSan stop with a nonzero exit, so make memcheck fails
 SANITIZE = -g -fsanitize=address,undefined -fno-sanitize-recover=all
 
-all: tests/test_bst
+all: treestats tests/test_bst
 .PHONY: all test memcheck clean
 
 bst.o: bst.c bst.h
@@ -22,8 +22,8 @@ treestats: treestats.o bst.o
 tests/test_bst: tests/test_bst.o bst.o
 	$(CC) $(CFLAGS) $(LDFLAGS) tests/test_bst.o bst.o -o tests/test_bst
 
-# unit tests, then the regression test; either one failing stops make
-test: tests/test_bst
+# unit tests: failing stops make
+test: treestats tests/test_bst
 	./tests/test_bst
 
 # rebuild everything with the sanitizers, run the tests, then clean so the
@@ -34,4 +34,4 @@ memcheck:
 	$(MAKE) clean
 
 clean:
-	rm -f *.o tests/*.o tests/test_bst
+	rm -f *.o tests/*.o tests/test_bst treestats
